@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import AdminLayout from '@/components/layout/AdminLayout';
 
 export default function AdminDashboard() {
@@ -72,27 +73,27 @@ export default function AdminDashboard() {
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <a
+            <Link
               href="/admin/surveys"
-              className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors block"
             >
               <h3 className="font-medium text-gray-900">Kelola Survei</h3>
               <p className="text-sm text-gray-600 mt-1">Buat dan kelola survei Anda</p>
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/users"
-              className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors block"
             >
               <h3 className="font-medium text-gray-900">Kelola User</h3>
               <p className="text-sm text-gray-600 mt-1">Atur pengguna dan akses</p>
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/references"
-              className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors block"
             >
               <h3 className="font-medium text-gray-900">Data Referensi</h3>
               <p className="text-sm text-gray-600 mt-1">Kelola data referensi sistem</p>
-            </a>
+            </Link>
           </div>
         </div>
       </div>
