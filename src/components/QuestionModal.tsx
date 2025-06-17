@@ -4,7 +4,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Dialog } from '@headlessui/react';
 import { XMarkIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useSurveyStore } from '@/store/surveyStore';
-import { Question, QuestionType, InstrumentLevel, QuestionOption } from '@/types';
+import { QuestionType, QuestionOption } from '@/types/question';
+import { InstrumentLevel } from '@/types/survey';
 
 interface QuestionModalProps {
   surveyId: string;
