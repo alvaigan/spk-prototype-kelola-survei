@@ -83,11 +83,12 @@ const mockInstrumentStructure = [
   }
 ];
 
-// Mock questions for Survey 1 - linked to instruments
+// Mock questions for Survey 1 - linked to instruments (at least 3 per instrument)
 const mockQuestions: Question[] = [
+  // Informasi Personal (inst-1-1) - 3 questions
   {
     id: 'q1',
-    instrumentId: 'inst-1-1', // Informasi Personal
+    instrumentId: 'inst-1-1',
     questionNumber: 1,
     title: 'Nama lengkap',
     type: 'short_answer',
@@ -95,8 +96,8 @@ const mockQuestions: Question[] = [
     respondentJobType: 'all'
   },
   {
-    id: 'q3',
-    instrumentId: 'inst-1-1', // Informasi Personal
+    id: 'q2',
+    instrumentId: 'inst-1-1',
     questionNumber: 2,
     title: 'Jenis kelamin',
     type: 'multiple_choice',
@@ -108,13 +109,24 @@ const mockQuestions: Question[] = [
     ]
   },
   {
-    id: 'q5',
-    instrumentId: 'inst-1-2', // Lokasi Geografis
+    id: 'q3',
+    instrumentId: 'inst-1-1',
     questionNumber: 3,
+    title: 'Usia Anda saat ini',
+    type: 'short_answer',
+    required: true,
+    respondentJobType: 'all'
+  },
+
+  // Lokasi Geografis (inst-1-2) - 3 questions
+  {
+    id: 'q4',
+    instrumentId: 'inst-1-2',
+    questionNumber: 4,
     title: 'Pilih kota tempat tinggal Anda',
     type: 'dropdown',
     required: true,
-    respondentJobType: 'employee',
+    respondentJobType: 'all',
     options: [
       { id: 'opt1', text: 'Jakarta', value: 'jakarta' },
       { id: 'opt2', text: 'Surabaya', value: 'surabaya' },
@@ -123,28 +135,112 @@ const mockQuestions: Question[] = [
     ]
   },
   {
-    id: 'q2',
-    instrumentId: 'inst-2-1', // Pengalaman Pengguna
-    questionNumber: 4,
+    id: 'q5',
+    instrumentId: 'inst-1-2',
+    questionNumber: 5,
+    title: 'Alamat lengkap tempat tinggal',
+    type: 'paragraph',
+    required: false,
+    respondentJobType: 'all'
+  },
+  {
+    id: 'q6',
+    instrumentId: 'inst-1-2',
+    questionNumber: 6,
+    title: 'Sudah berapa lama tinggal di kota tersebut?',
+    type: 'multiple_choice',
+    required: false,
+    respondentJobType: 'all',
+    options: [
+      { id: 'opt1', text: 'Kurang dari 1 tahun', value: 'less_1' },
+      { id: 'opt2', text: '1-5 tahun', value: '1_5' },
+      { id: 'opt3', text: '5-10 tahun', value: '5_10' },
+      { id: 'opt4', text: 'Lebih dari 10 tahun', value: 'more_10' }
+    ]
+  },
+
+  // Pengalaman Pengguna (inst-2-1) - 3 questions
+  {
+    id: 'q7',
+    instrumentId: 'inst-2-1',
+    questionNumber: 7,
     title: 'Ceritakan pengalaman Anda dengan layanan kami',
     type: 'paragraph',
     required: false,
     respondentJobType: 'all'
   },
   {
-    id: 'q4',
-    instrumentId: 'inst-2-2', // Fitur yang Digunakan
-    questionNumber: 5,
-    title: 'Apa saja yang Anda gunakan dari layanan kami?',
+    id: 'q8',
+    instrumentId: 'inst-2-1',
+    questionNumber: 8,
+    title: 'Seberapa puas Anda dengan layanan kami?',
+    type: 'multiple_choice',
+    required: true,
+    respondentJobType: 'all',
+    options: [
+      { id: 'opt1', text: 'Sangat Tidak Puas', value: '1' },
+      { id: 'opt2', text: 'Tidak Puas', value: '2' },
+      { id: 'opt3', text: 'Netral', value: '3' },
+      { id: 'opt4', text: 'Puas', value: '4' },
+      { id: 'opt5', text: 'Sangat Puas', value: '5' }
+    ]
+  },
+  {
+    id: 'q9',
+    instrumentId: 'inst-2-1',
+    questionNumber: 9,
+    title: 'Apakah Anda akan merekomendasikan layanan kami?',
+    type: 'multiple_choice',
+    required: true,
+    respondentJobType: 'all',
+    options: [
+      { id: 'opt1', text: 'Ya, pasti', value: 'definitely_yes' },
+      { id: 'opt2', text: 'Mungkin ya', value: 'maybe_yes' },
+      { id: 'opt3', text: 'Tidak yakin', value: 'unsure' },
+      { id: 'opt4', text: 'Mungkin tidak', value: 'maybe_no' },
+      { id: 'opt5', text: 'Tidak', value: 'no' }
+    ]
+  },
+
+  // Fitur yang Digunakan (inst-2-2) - 3 questions
+  {
+    id: 'q10',
+    instrumentId: 'inst-2-2',
+    questionNumber: 10,
+    title: 'Apa saja fitur yang Anda gunakan dari layanan kami?',
     type: 'checkbox',
     required: false,
-    respondentJobType: 'manager',
+    respondentJobType: 'all',
     options: [
       { id: 'opt1', text: 'Pembayaran', value: 'payment' },
       { id: 'opt2', text: 'Pengiriman', value: 'shipping' },
       { id: 'opt3', text: 'Pelacakan', value: 'tracking' },
       { id: 'opt4', text: 'Customer Service', value: 'support' }
     ]
+  },
+  {
+    id: 'q11',
+    instrumentId: 'inst-2-2',
+    questionNumber: 11,
+    title: 'Fitur mana yang paling sering Anda gunakan?',
+    type: 'dropdown',
+    required: true,
+    respondentJobType: 'all',
+    options: [
+      { id: 'opt1', text: 'Pembayaran', value: 'payment' },
+      { id: 'opt2', text: 'Pengiriman', value: 'shipping' },
+      { id: 'opt3', text: 'Pelacakan', value: 'tracking' },
+      { id: 'opt4', text: 'Customer Service', value: 'support' }
+    ]
+  },
+  {
+    id: 'q12',
+    instrumentId: 'inst-2-2',
+    questionNumber: 12,
+    title: 'Fitur apa yang ingin Anda lihat ditambahkan?',
+    type: 'paragraph',
+    required: false,
+    respondentJobType: 'all'
   }
 ];
 
@@ -155,7 +251,7 @@ const mockSurveys: Survey[] = [
     code: 'SRV001',
     title: 'Survey 1',
     description: 'Description for Survey 1',
-    totalQuestions: 5,
+    totalQuestions: 12,
     createdAt: '1 Januari 2025 pukul 07:00:00',
     status: 'Aktif',
     instrumentStructure: mockInstrumentStructure,

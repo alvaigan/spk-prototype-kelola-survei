@@ -1,7 +1,16 @@
 'use client'
 
 import { useSurveyStore } from '@/store/surveyStore';
-import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
+import { 
+  EllipsisVerticalIcon,
+  DocumentTextIcon,
+  PencilIcon,
+  EyeIcon,
+  TrashIcon,
+  LinkIcon,
+  XMarkIcon,
+  ClockIcon
+} from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -28,6 +37,36 @@ export default function SurveyTable() {
       deleteSurvey(id);
       setActiveDropdown(null);
     }
+  };
+
+  const handleKelolaClick = (survey: any) => {
+    setCurrentSurvey(survey);
+    setActiveDropdown(null);
+    router.push(`/admin/surveys/${survey.id}`);
+  };
+
+  const handleEditClick = (survey: any) => {
+    // TODO: Implement edit functionality
+    setActiveDropdown(null);
+    console.log('Edit survey:', survey.id);
+  };
+
+  const handlePratinjauClick = (survey: any) => {
+    // Navigate to survey preview page
+    setActiveDropdown(null);
+    router.push(`/survey/preview/${survey.id}`);
+  };
+
+  const handleBagikanClick = (survey: any) => {
+    // TODO: Implement share link functionality
+    setActiveDropdown(null);
+    console.log('Share survey:', survey.id);
+  };
+
+  const handleCutoffClick = (survey: any) => {
+    // TODO: Implement cutoff functionality
+    setActiveDropdown(null);
+    console.log('Cutoff survey:', survey.id);
   };
 
   return (
@@ -91,29 +130,62 @@ export default function SurveyTable() {
                 </button>
                 
                 {activeDropdown === survey.id && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-10 border border-gray-200">
                     <div className="py-1">
                       <button
-                        onClick={() => {
-                          setCurrentSurvey(survey);
-                          setActiveDropdown(null);
-                          router.push(`/admin/surveys/${survey.id}`);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => handleKelolaClick(survey)}
+                        className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
-                        Lihat Detail
+                        <DocumentTextIcon className="h-4 w-4 mr-3 text-purple-500" />
+                        Kelola Pertanyaan
                       </button>
+                      
                       <button
-                        onClick={() => handleStatusToggle(survey.id, survey.status)}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => handleEditClick(survey)}
+                        className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
-                        {survey.status === 'Aktif' ? 'Nonaktifkan' : 'Aktifkan'}
+                        <PencilIcon className="h-4 w-4 mr-3 text-blue-500" />
+                        Edit
                       </button>
+                      
+                      <button
+                        onClick={() => handlePratinjauClick(survey)}
+                        className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <EyeIcon className="h-4 w-4 mr-3 text-gray-500" />
+                        Pratinjau
+                      </button>
+                      
                       <button
                         onClick={() => handleDelete(survey.id)}
-                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                        className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                       >
+                        <TrashIcon className="h-4 w-4 mr-3 text-red-500" />
                         Hapus
+                      </button>
+                      
+                      <button
+                        onClick={() => handleBagikanClick(survey)}
+                        className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <LinkIcon className="h-4 w-4 mr-3 text-blue-500" />
+                        Bagikan Link
+                      </button>
+                      
+                      <button
+                        onClick={() => handleStatusToggle(survey.id, survey.status)}
+                        className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        <XMarkIcon className="h-4 w-4 mr-3 text-red-500" />
+                        {survey.status === 'Aktif' ? 'Non-Aktifkan' : 'Aktifkan'}
+                      </button>
+                      
+                      <button
+                        onClick={() => handleCutoffClick(survey)}
+                        className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <ClockIcon className="h-4 w-4 mr-3 text-orange-500" />
+                        Cutoff
                       </button>
                     </div>
                   </div>
