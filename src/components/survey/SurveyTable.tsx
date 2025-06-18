@@ -1,6 +1,7 @@
 'use client'
 
 import { useSurveyStore } from '@/store/surveyStore';
+import { Survey } from '@/types/survey';
 import { 
   EllipsisVerticalIcon,
   DocumentTextIcon,
@@ -39,31 +40,31 @@ export default function SurveyTable() {
     }
   };
 
-  const handleKelolaClick = (survey: any) => {
+  const handleKelolaClick = (survey: Survey) => {
     setCurrentSurvey(survey);
     setActiveDropdown(null);
     router.push(`/admin/surveys/${survey.id}`);
   };
 
-  const handleEditClick = (survey: any) => {
+  const handleEditClick = (survey: Survey) => {
     // TODO: Implement edit functionality
     setActiveDropdown(null);
     console.log('Edit survey:', survey.id);
   };
 
-  const handlePratinjauClick = (survey: any) => {
+  const handlePratinjauClick = (survey: Survey) => {
     // Navigate to survey preview page
     setActiveDropdown(null);
     router.push(`/survey/preview/${survey.id}`);
   };
 
-  const handleBagikanClick = (survey: any) => {
+  const handleBagikanClick = (survey: Survey) => {
     // TODO: Implement share link functionality
     setActiveDropdown(null);
     console.log('Share survey:', survey.id);
   };
 
-  const handleCutoffClick = (survey: any) => {
+  const handleCutoffClick = (survey: Survey) => {
     // TODO: Implement cutoff functionality
     setActiveDropdown(null);
     console.log('Cutoff survey:', survey.id);

@@ -8,7 +8,6 @@ import {
   ChevronRightIcon,
   ChevronLeftIcon,
   UserIcon,
-  CalendarIcon,
   CheckCircleIcon
 } from '@heroicons/react/24/outline';
 import { useSurveyStore } from '@/store/surveyStore';
@@ -36,7 +35,7 @@ export default function SurveyPreviewPage() {
     birthDate: '',
     isCompleted: false
   });
-  const [responses, setResponses] = useState<{ [questionId: string]: any }>({});
+  const [responses, setResponses] = useState<{ [questionId: string]: string | string[] }>({});
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
 
@@ -85,7 +84,7 @@ export default function SurveyPreviewPage() {
     return survey.questions.filter(q => q.instrumentId === instrumentId);
   };
 
-  const handleResponseChange = (questionId: string, value: any) => {
+  const handleResponseChange = (questionId: string, value: string | string[]) => {
     setResponses(prev => ({
       ...prev,
       [questionId]: value
@@ -444,7 +443,6 @@ export default function SurveyPreviewPage() {
       const isSelected = selectedInstrumentId === instrument.id;
       const hasChildren = instrument.children && instrument.children.length > 0;
       const hasQuestions = questions.length > 0;
-      const canClick = userInfo.isCompleted && hasQuestions;
       
       return (
         <div key={instrument.id}>
