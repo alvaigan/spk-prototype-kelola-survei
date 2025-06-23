@@ -28,6 +28,7 @@ interface SurveyState {
   deleteQuestion: (surveyId: string, questionId: string) => void;
   moveQuestionUp: (surveyId: string, questionId: string) => void;
   moveQuestionDown: (surveyId: string, questionId: string) => void;
+  updateInstrumentJobType: (surveyId: string, instrumentId: string, jobType: 'all' | 'dosen' | 'mahasiswa' | 'tendik') => void;
   getFilteredSurveys: () => Survey[];
 }
 
@@ -38,6 +39,7 @@ const mockInstrumentStructure = [
     code: 'L1001',
     name: 'Data Demografi',
     level: 1 as const,
+    jobType: 'all' as const,
     children: [
       {
         id: 'inst-1-1',
@@ -45,6 +47,7 @@ const mockInstrumentStructure = [
         name: 'Informasi Personal',
         level: 2 as const,
         parentId: 'inst-1',
+        jobType: 'all' as const,
         children: []
       },
       {
@@ -53,6 +56,7 @@ const mockInstrumentStructure = [
         name: 'Lokasi Geografis',
         level: 2 as const,
         parentId: 'inst-1',
+        jobType: 'all' as const,
         children: []
       }
     ]
@@ -62,6 +66,7 @@ const mockInstrumentStructure = [
     code: 'L1002',
     name: 'Evaluasi Layanan',
     level: 1 as const,
+    jobType: 'all' as const,
     children: [
       {
         id: 'inst-2-1',
@@ -69,6 +74,7 @@ const mockInstrumentStructure = [
         name: 'Pengalaman Pengguna',
         level: 2 as const,
         parentId: 'inst-2',
+        jobType: 'all' as const,
         children: []
       },
       {
@@ -77,6 +83,7 @@ const mockInstrumentStructure = [
         name: 'Fitur yang Digunakan',
         level: 2 as const,
         parentId: 'inst-2',
+        jobType: 'all' as const,
         children: []
       }
     ]
@@ -489,6 +496,42 @@ export const useSurveyStore = create<SurveyState>((set, get) => ({
           }
           
           return { ...survey, questions };
+        }
+        return survey;
+      });
+      
+      // Update current survey if it's the one being modified
+      const currentSurvey = state.currentSurvey?.id === surveyId 
+        ? surveys.find(s => s.id === surveyId) || null
+        : state.currentSurvey;
+      
+      return { surveys, currentSurvey };
+    });
+  },
+
+  updateInstrumentJobType: (surveyId, instrumentId, jobType) => {
+    const updateInstrumentRecursive = (instruments: any[]): any[] => {
+      return instruments.map(instrument => {
+        if (instrument.id === instrumentId) {
+          return { ...instrument, jobType };
+        }
+        if (instrument.children && instrument.children.length > 0) {
+          return {
+            ...instrument,
+            children: updateInstrumentRecursive(instrument.children)
+          };
+        }
+        return instrument;
+      });
+    };
+
+    set((state) => {
+      const surveys = state.surveys.map(survey => {
+        if (survey.id === surveyId) {
+          return {
+            ...survey,
+            instrumentStructure: updateInstrumentRecursive(survey.instrumentStructure)
+          };
         }
         return survey;
       });

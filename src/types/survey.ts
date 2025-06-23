@@ -22,6 +22,7 @@ export interface InstrumentLevel {
   level: 1 | 2 | 3;
   parentId?: string;
   children: InstrumentLevel[];
+  jobType?: 'all' | 'dosen' | 'mahasiswa' | 'tendik';
 }
 
 export interface CreateSurveyData {

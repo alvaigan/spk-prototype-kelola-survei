@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeftIcon, PlusIcon, ArrowUpIcon, ArrowDownIcon, PencilIcon, TrashIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, PlusIcon, ArrowUpIcon, ArrowDownIcon, PencilIcon, TrashIcon, ArrowDownTrayIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { QuestionModal } from '@/components/QuestionModal';
 import { useSurveyStore } from '@/store/surveyStore';
@@ -25,6 +25,13 @@ const questionTypeColors = {
   dropdown: 'bg-red-100 text-red-800'
 };
 
+const jobTypeOptions = [
+  { value: 'all', label: 'All' },
+  { value: 'dosen', label: 'Dosen' },
+  { value: 'mahasiswa', label: 'Mahasiswa' },
+  { value: 'tendik', label: 'Tendik' }
+];
+
 export default function SurveyDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -36,7 +43,8 @@ export default function SurveyDetailPage() {
     setEditingQuestion,
     deleteQuestion,
     moveQuestionUp,
-    moveQuestionDown 
+    moveQuestionDown,
+    updateInstrumentJobType
   } = useSurveyStore();
   
   const surveyId = params.id as string;
@@ -103,6 +111,10 @@ export default function SurveyDetailPage() {
 
   const handleMoveQuestionDown = (questionId: string) => {
     moveQuestionDown(surveyId, questionId);
+  };
+
+  const handleInstrumentJobTypeChange = (instrumentId: string, jobType: 'all' | 'dosen' | 'mahasiswa' | 'tendik') => {
+    updateInstrumentJobType(surveyId, instrumentId, jobType);
   };
 
   const renderQuestionOptions = (question: Question) => {
@@ -231,9 +243,27 @@ export default function SurveyDetailPage() {
               <span className="text-sm text-gray-500">
                 {totalQuestions} pertanyaan
               </span>
+              {/* Job Type Dropdown */}
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600 font-medium">Job Type:</span>
+                <div className="relative">
+                  <select
+                    value={instrument.jobType || 'all'}
+                    onChange={(e) => handleInstrumentJobTypeChange(instrument.id, e.target.value as 'all' | 'dosen' | 'mahasiswa' | 'tendik')}
+                    className="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-[100px]"
+                  >
+                    {jobTypeOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
               <button 
                 onClick={handleAddQuestion}
-                className="flex items-center space-x-2 px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+                className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
               >
                 <PlusIcon className="h-4 w-4" />
                 <span>Add Question</span>
