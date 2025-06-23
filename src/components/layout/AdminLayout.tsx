@@ -10,7 +10,8 @@ import {
   CogIcon,
   ArrowRightOnRectangleIcon,
   MagnifyingGlassIcon,
-  BellIcon
+  BellIcon,
+  UserGroupIcon
 } from '@heroicons/react/24/outline';
 
 interface AdminLayoutProps {
@@ -22,6 +23,7 @@ const navigation = [
   { name: 'Kelola User', href: '/admin/users', icon: UsersIcon },
   { name: 'Profil', href: '/admin/profile', icon: UserCircleIcon },
   { name: 'Kelola Survei', href: '/admin/surveys', icon: DocumentTextIcon },
+  { name: 'Kelola Responden', href: '/admin/respondents', icon: UserGroupIcon },
   { name: 'Data Referensi', href: '/admin/references', icon: CogIcon },
 ];
 

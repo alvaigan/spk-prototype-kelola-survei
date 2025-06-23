@@ -14,6 +14,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import ShareLinkModal from '@/components/modals/ShareLinkModal';
 
 export default function SurveyTable() {
   const router = useRouter();
@@ -24,6 +25,8 @@ export default function SurveyTable() {
     setCurrentSurvey 
   } = useSurveyStore();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
   
   const surveys = getFilteredSurveys();
 
@@ -59,9 +62,9 @@ export default function SurveyTable() {
   };
 
   const handleBagikanClick = (survey: Survey) => {
-    // TODO: Implement share link functionality
+    setSelectedSurvey(survey);
+    setShowShareModal(true);
     setActiveDropdown(null);
-    console.log('Share survey:', survey.id);
   };
 
   const handleCutoffClick = (survey: Survey) => {
@@ -202,6 +205,15 @@ export default function SurveyTable() {
           <p className="text-gray-500">Tidak ada survey yang ditemukan.</p>
         </div>
       )}
+
+      <ShareLinkModal
+        isOpen={showShareModal}
+        onClose={() => {
+          setShowShareModal(false);
+          setSelectedSurvey(null);
+        }}
+        survey={selectedSurvey}
+      />
     </div>
   );
 } 
