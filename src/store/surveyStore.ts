@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Survey, CreateSurveyData, Question } from '@/types/survey';
+import { Survey, CreateSurveyData, Question, InstrumentLevel } from '@/types/survey';
 
 interface SurveyState {
   surveys: Survey[];
@@ -510,7 +510,7 @@ export const useSurveyStore = create<SurveyState>((set, get) => ({
   },
 
   updateInstrumentJobType: (surveyId, instrumentId, jobType) => {
-    const updateInstrumentRecursive = (instruments: any[]): any[] => {
+    const updateInstrumentRecursive = (instruments: InstrumentLevel[]): InstrumentLevel[] => {
       return instruments.map(instrument => {
         if (instrument.id === instrumentId) {
           return { ...instrument, jobType };
