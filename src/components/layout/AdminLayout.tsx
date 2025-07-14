@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { 
   HomeIcon, 
   UsersIcon, 
@@ -11,24 +12,74 @@ import {
   ArrowRightOnRectangleIcon,
   MagnifyingGlassIcon,
   BellIcon,
-  UserGroupIcon
+  UserGroupIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  InformationCircleIcon
 } from '@heroicons/react/24/outline';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-const navigation = [
+interface NavigationItem {
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  subItems?: NavigationItem[];
+}
+
+const navigation: NavigationItem[] = [
   { name: 'Dashboard', href: '/admin', icon: HomeIcon },
   { name: 'Kelola User', href: '/admin/users', icon: UsersIcon },
   { name: 'Profil', href: '/admin/profile', icon: UserCircleIcon },
   { name: 'Kelola Survei', href: '/admin/surveys', icon: DocumentTextIcon },
   { name: 'Kelola Responden', href: '/admin/respondents', icon: UserGroupIcon },
   { name: 'Data Referensi', href: '/admin/references', icon: CogIcon },
+  { 
+    name: 'Pengaturan', 
+    href: '/admin/settings', 
+    icon: CogIcon,
+    subItems: [
+      { 
+        name: 'Informasi Pasca Submit', 
+        href: '/admin/settings/post-submit-info', 
+        icon: InformationCircleIcon 
+      }
+    ]
+  },
 ];
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname();
+  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
+
+  const toggleMenu = (itemName: string) => {
+    setExpandedMenus(prev => 
+      prev.includes(itemName) 
+        ? prev.filter(name => name !== itemName)
+        : [...prev, itemName]
+    );
+  };
+
+  const isActive = (href: string) => {
+    return pathname === href || (href !== '/admin' && pathname.startsWith(href));
+  };
+
+  const hasActiveSubItem = (subItems: NavigationItem[]) => {
+    return subItems.some(subItem => isActive(subItem.href));
+  };
+
+  // Auto-expand menus with active sub-items
+  useEffect(() => {
+    navigation.forEach(item => {
+      if (item.subItems && hasActiveSubItem(item.subItems)) {
+        setExpandedMenus(prev => 
+          prev.includes(item.name) ? prev : [...prev, item.name]
+        );
+      }
+    });
+  }, [pathname]);
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -58,24 +109,66 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         {/* Navigation */}
         <nav className="flex-1 px-4 py-6 space-y-2">
           {navigation.map((item) => {
-            const isActive = pathname === item.href || 
-              (item.href !== '/admin' && pathname.startsWith(item.href));
+            const itemActive = isActive(item.href);
+            const hasSubItems = item.subItems && item.subItems.length > 0;
+            const isExpanded = expandedMenus.includes(item.name);
+            const hasActiveChild = hasSubItems && item.subItems && hasActiveSubItem(item.subItems);
             
             return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`
-                  flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors
-                  ${isActive 
-                    ? 'bg-blue-700 text-white' 
-                    : 'text-blue-100 hover:bg-blue-500 hover:text-white'
-                  }
-                `}
-              >
-                <item.icon className="h-5 w-5" />
-                <span>{item.name}</span>
-              </Link>
+              <div key={item.name}>
+                {/* Main navigation item */}
+                <div className="flex items-center">
+                  <Link
+                    href={item.href}
+                    className={`
+                      flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors flex-1
+                      ${itemActive || hasActiveChild
+                        ? 'bg-blue-700 text-white' 
+                        : 'text-blue-100 hover:bg-blue-500 hover:text-white'
+                      }
+                    `}
+                  >
+                    <item.icon className="h-5 w-5" />
+                    <span>{item.name}</span>
+                  </Link>
+                  
+                  {/* Expand/collapse button for items with sub-items */}
+                  {hasSubItems && (
+                    <button
+                      onClick={() => toggleMenu(item.name)}
+                      className="p-2 text-blue-100 hover:text-white hover:bg-blue-500 rounded-lg transition-colors ml-1"
+                    >
+                      {isExpanded ? (
+                        <ChevronDownIcon className="h-4 w-4" />
+                      ) : (
+                        <ChevronRightIcon className="h-4 w-4" />
+                      )}
+                    </button>
+                  )}
+                </div>
+
+                {/* Sub-navigation items */}
+                {hasSubItems && isExpanded && item.subItems && (
+                  <div className="ml-4 mt-2 space-y-1">
+                    {item.subItems.map((subItem) => (
+                      <Link
+                        key={subItem.name}
+                        href={subItem.href}
+                        className={`
+                          flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors text-sm
+                          ${isActive(subItem.href)
+                            ? 'bg-blue-700 text-white' 
+                            : 'text-blue-100 hover:bg-blue-500 hover:text-white'
+                          }
+                        `}
+                      >
+                        <subItem.icon className="h-4 w-4" />
+                        <span>{subItem.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             );
           })}
         </nav>
