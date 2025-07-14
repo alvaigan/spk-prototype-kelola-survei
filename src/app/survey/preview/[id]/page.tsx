@@ -8,7 +8,8 @@ import {
   ChevronRightIcon,
   ChevronLeftIcon,
   UserIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
+  IdentificationIcon
 } from '@heroicons/react/24/outline';
 import { useSurveyStore } from '@/store/surveyStore';
 import { Survey, InstrumentLevel } from '@/types/survey';
@@ -31,8 +32,9 @@ export default function SurveyPreviewPage() {
   const [survey, setSurvey] = useState<Survey | null>(null);
   const [selectedInstrumentId, setSelectedInstrumentId] = useState<string>('user-identification');
   const [userInfo, setUserInfo] = useState({
+    name: '',
     email: '',
-    birthDate: '',
+    memberId: '',
     isCompleted: false
   });
   const [responses, setResponses] = useState<{ [questionId: string]: string | string[] }>({});
@@ -51,7 +53,7 @@ export default function SurveyPreviewPage() {
   };
 
   const handleUserInfoSubmit = () => {
-    if (userInfo.email && userInfo.birthDate) {
+    if (userInfo.name && userInfo.email && userInfo.memberId) {
       setUserInfo(prev => ({ ...prev, isCompleted: true }));
       // Auto-select first instrument with questions after user info is completed
       if (survey?.instrumentStructure && survey.instrumentStructure.length > 0) {
@@ -150,6 +152,36 @@ export default function SurveyPreviewPage() {
     setShowSubmitDialog(false);
     alert('Survey submitted successfully!');
     // Could redirect back to surveys or show success page
+  };
+
+  // User Identity Display Component
+  const renderUserIdentityDisplay = () => {
+    if (!userInfo.isCompleted) return null;
+
+    return (
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div className="flex items-start space-x-3">
+          <IdentificationIcon className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <h4 className="text-sm font-semibold text-blue-900 mb-2">Identitas Responden</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+              <div>
+                <span className="text-blue-700 font-medium">Nama:</span>
+                <p className="text-blue-800 truncate">{userInfo.name}</p>
+              </div>
+              <div>
+                <span className="text-blue-700 font-medium">Email:</span>
+                <p className="text-blue-800 truncate">{userInfo.email}</p>
+              </div>
+              <div>
+                <span className="text-blue-700 font-medium">Member ID:</span>
+                <p className="text-blue-800 truncate">{userInfo.memberId}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const renderQuestionInput = (question: Question) => {
@@ -255,6 +287,20 @@ export default function SurveyPreviewPage() {
         <div className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nama Lengkap <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={userInfo.name}
+              onChange={(e) => setUserInfo(prev => ({ ...prev, name: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Masukkan nama lengkap Anda"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Email <span className="text-red-500">*</span>
             </label>
             <input
@@ -269,20 +315,21 @@ export default function SurveyPreviewPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tanggal Lahir <span className="text-red-500">*</span>
+              Member ID <span className="text-red-500">*</span>
             </label>
             <input
-              type="date"
-              value={userInfo.birthDate}
-              onChange={(e) => setUserInfo(prev => ({ ...prev, birthDate: e.target.value }))}
+              type="text"
+              value={userInfo.memberId}
+              onChange={(e) => setUserInfo(prev => ({ ...prev, memberId: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Masukkan Member ID Anda"
               required
             />
           </div>
 
           <button
             onClick={handleUserInfoSubmit}
-            disabled={!userInfo.email || !userInfo.birthDate}
+            disabled={!userInfo.name || !userInfo.email || !userInfo.memberId}
             className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
           >
             Lanjutkan ke Survei
@@ -328,52 +375,38 @@ export default function SurveyPreviewPage() {
 
     return (
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-          {/* Navigation Header */}
-          <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
-            <button
-              onClick={handleBackInstrument}
-              disabled={!canGoBack()}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors ${
-                canGoBack()
-                  ? 'text-blue-600 hover:bg-blue-50 hover:text-blue-800'
-                  : 'text-gray-300 cursor-not-allowed'
-              }`}
-            >
-              <ChevronLeftIcon className="h-4 w-4" />
-              <span>Sebelumnya</span>
-            </button>
+        {/* User Identity Display */}
+        {renderUserIdentityDisplay()}
 
-            <div className="text-center">
-              <div className={`inline-flex px-3 py-1 text-sm font-medium rounded-full mb-2 ${
-                selectedInstrument.level === 1 ? 'bg-blue-100 text-blue-800' :
-                selectedInstrument.level === 2 ? 'bg-green-100 text-green-800' :
-                'bg-purple-100 text-purple-800'
-              }`}>
-                Level {selectedInstrument.level} • {selectedInstrument.code}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+          {/* Instrument Header */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-900">{selectedInstrument.name}</h2>
+                <p className="text-gray-600">{questions.length} pertanyaan dalam instrumen ini</p>
               </div>
-              <div className="text-sm text-gray-500">
-                {getCurrentInstrumentIndex() + 1} dari {getInstrumentsWithQuestions().length} instrumen
+              
+              {/* Navigation buttons */}
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleBackInstrument}
+                  disabled={!canGoBack()}
+                  className="flex items-center space-x-2 px-3 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeftIcon className="h-4 w-4" />
+                  <span className="hidden sm:inline">Sebelumnya</span>
+                </button>
+                <button
+                  onClick={handleForwardInstrument}
+                  disabled={!canGoForward()}
+                  className="flex items-center space-x-2 px-3 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <span className="hidden sm:inline">Selanjutnya</span>
+                  <ChevronRightIcon className="h-4 w-4" />
+                </button>
               </div>
             </div>
-
-            <button
-              onClick={handleForwardInstrument}
-              disabled={!canGoForward()}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors ${
-                canGoForward()
-                  ? 'text-blue-600 hover:bg-blue-50 hover:text-blue-800'
-                  : 'text-gray-300 cursor-not-allowed'
-              }`}
-            >
-              <span>Selanjutnya</span>
-              <ChevronRightIcon className="h-4 w-4" />
-            </button>
-          </div>
-
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">{selectedInstrument.name}</h2>
-            <p className="text-gray-600">{questions.length} pertanyaan dalam instrumen ini</p>
           </div>
 
           {questions.length > 0 ? (
@@ -408,28 +441,27 @@ export default function SurveyPreviewPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
-                {isLastInstrument() ? (
+              <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+                <button
+                  onClick={handleSave}
+                  className="px-6 py-2 text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition-colors"
+                >
+                  Simpan Draft
+                </button>
+                
+                {isLastInstrument() && (
                   <button
                     onClick={handleSubmit}
-                    className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium"
+                    className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
                   >
                     Submit Survey
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleSave}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
-                  >
-                    Save Progress
                   </button>
                 )}
               </div>
             </>
           ) : (
-            <div className="text-center py-12">
-              <DocumentTextIcon className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-500">Tidak ada pertanyaan dalam instrumen ini</p>
+            <div className="text-center py-8">
+              <p className="text-gray-500">Tidak ada pertanyaan dalam instrumen ini.</p>
             </div>
           )}
         </div>
@@ -437,157 +469,84 @@ export default function SurveyPreviewPage() {
     );
   };
 
-  const renderInstrumentTree = (instruments: InstrumentLevel[], depth: number = 0) => {
-    return instruments.map((instrument) => {
-      const questions = getQuestionsForInstrument(instrument.id);
-      const isSelected = selectedInstrumentId === instrument.id;
-      const hasChildren = instrument.children && instrument.children.length > 0;
-      const hasQuestions = questions.length > 0;
-      
-      return (
-        <div key={instrument.id}>
-          <button
-            onClick={() => hasQuestions && userInfo.isCompleted && setSelectedInstrumentId(instrument.id)}
-            className={`w-full transition-colors ${
-              sidebarHovered 
-                ? `flex items-center space-x-2 p-2 rounded-lg ${
-                    isSelected && hasQuestions
-                      ? 'bg-blue-100 text-blue-800 border border-blue-200'
-                      : hasQuestions && userInfo.isCompleted
-                      ? 'text-gray-700 hover:bg-gray-100'
-                      : !userInfo.isCompleted
-                      ? 'text-gray-400'
-                      : 'text-gray-500'
-                  }`
-                : `flex items-center justify-center p-2 mx-1 rounded-lg ${
-                    isSelected && hasQuestions
-                      ? 'bg-blue-100 border border-blue-200'
-                      : hasQuestions && userInfo.isCompleted
-                      ? 'hover:bg-gray-100'
-                      : ''
-                  }`
-            }`}
-            style={{ marginLeft: sidebarHovered ? `${depth * 16}px` : '0px' }}
-          >
-            {sidebarHovered ? (
-              <>
-                {/* Tree connector lines */}
-                {depth > 0 && (
-                  <div className="flex items-center">
-                    <div className="w-4 h-px bg-gray-300"></div>
-                  </div>
-                )}
-                
-                {/* Level indicator dot */}
-                <div className={`w-3 h-3 rounded-full flex-shrink-0 ${
-                  instrument.level === 1 ? 'bg-blue-500' :
-                  instrument.level === 2 ? 'bg-green-500' :
-                  'bg-purple-500'
-                }`} />
-                
-                <div className="flex-1 text-left min-w-0">
-                  <div className="font-medium text-sm truncate">
-                    {instrument.name}
-                  </div>
-                  {hasQuestions && (
-                    <div className="text-xs opacity-75 truncate">
-                      {instrument.code} • {questions.length} pertanyaan
-                    </div>
-                  )}
-                  {!hasQuestions && (
-                    <div className="text-xs opacity-75 truncate">
-                      {instrument.code}
-                    </div>
-                  )}
-                </div>
-              </>
-            ) : (
-              /* Minimized view - centered dot */
-              <div className={`w-3 h-3 rounded-full ${
-                instrument.level === 1 ? 'bg-blue-500' :
-                instrument.level === 2 ? 'bg-green-500' :
-                'bg-purple-500'
-              }`} />
-            )}
-          </button>
-          
-          {/* Render children */}
-          {hasChildren && sidebarHovered && (
-            <div className="mt-1">
-              {renderInstrumentTree(instrument.children!, depth + 1)}
-            </div>
-          )}
-        </div>
-      );
-    });
-  };
-
   const renderSidebar = () => {
-    if (!survey?.instrumentStructure) return null;
+    if (!survey) return null;
+
+    const allInstruments = survey.instrumentStructure 
+      ? getAllInstruments(survey.instrumentStructure)
+      : [];
+    
+    const instrumentsWithQuestions = allInstruments.filter(inst => 
+      getQuestionsForInstrument(inst.id).length > 0
+    );
 
     return (
       <div 
-        className={`fixed left-0 top-0 h-full bg-white shadow-lg border-r border-gray-200 transition-all duration-300 z-50 overflow-y-auto ${
+        className={`fixed left-0 top-0 h-full bg-white shadow-lg border-r border-gray-200 transition-all duration-300 z-40 ${
           sidebarHovered ? 'w-80' : 'w-16'
         }`}
         onMouseEnter={() => setSidebarHovered(true)}
         onMouseLeave={() => setSidebarHovered(false)}
       >
         <div className="p-4">
+          {/* Logo/Header */}
           <div className="flex items-center space-x-3 mb-6">
-            <DocumentTextIcon className="h-6 w-6 text-blue-600 flex-shrink-0" />
+            <DocumentTextIcon className="h-8 w-8 text-blue-600 flex-shrink-0" />
             {sidebarHovered && (
-              <div>
-                <h3 className="font-semibold text-gray-900 text-sm truncate">Instrumen Survei</h3>
-                <p className="text-xs text-gray-500">Pilih instrumen</p>
+              <div className="min-w-0">
+                <h2 className="text-lg font-semibold text-gray-900 truncate">Survey Preview</h2>
+                <p className="text-sm text-gray-500 truncate">{survey.title}</p>
               </div>
             )}
           </div>
 
-          <div className="space-y-1">
+          {/* Navigation Items */}
+          <nav className="space-y-2">
             {/* User Identification */}
             <button
               onClick={() => setSelectedInstrumentId('user-identification')}
-              className={`w-full transition-colors ${
-                sidebarHovered
-                  ? `flex items-center space-x-3 p-3 rounded-lg ${
-                      selectedInstrumentId === 'user-identification'
-                        ? 'bg-blue-100 text-blue-800 border border-blue-200'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`
-                  : `flex items-center justify-center p-3 mx-1 rounded-lg ${
-                      selectedInstrumentId === 'user-identification'
-                        ? 'bg-blue-100 border border-blue-200'
-                        : 'hover:bg-gray-100'
-                    }`
+              className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors text-left ${
+                selectedInstrumentId === 'user-identification'
+                  ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                  : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              {sidebarHovered ? (
-                <>
-                  <UserIcon className="h-5 w-5 flex-shrink-0 text-blue-600" />
-                  <div className="flex-1 text-left">
-                    <div className="font-medium text-sm">Identifikasi</div>
-                    <div className="text-xs opacity-75">Informasi responden</div>
-                  </div>
-                  {userInfo.isCompleted && (
-                    <CheckCircleIcon className="h-4 w-4 text-green-600 flex-shrink-0" />
-                  )}
-                </>
-              ) : (
-                <div className="relative">
-                  <UserIcon className="h-5 w-5 text-blue-600" />
-                  {userInfo.isCompleted && (
-                    <CheckCircleIcon className="h-3 w-3 text-green-600 absolute -top-1 -right-1" />
-                  )}
+              <UserIcon className="h-5 w-5 flex-shrink-0" />
+              {sidebarHovered && (
+                <div className="min-w-0 flex-1">
+                  <span className="block text-sm font-medium truncate">Identifikasi</span>
+                  <span className="block text-xs text-gray-500 truncate">
+                    {userInfo.isCompleted ? '✓ Selesai' : 'Belum lengkap'}
+                  </span>
                 </div>
               )}
             </button>
 
-            {/* Instruments Tree */}
-            <div className="space-y-1">
-              {renderInstrumentTree(survey.instrumentStructure)}
-            </div>
-          </div>
+            {/* Instruments */}
+            {instrumentsWithQuestions.map((instrument, index) => (
+              <button
+                key={instrument.id}
+                onClick={() => setSelectedInstrumentId(instrument.id)}
+                className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors text-left ${
+                  selectedInstrumentId === instrument.id
+                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <span className="flex items-center justify-center w-5 h-5 bg-gray-300 text-gray-700 rounded text-xs font-medium flex-shrink-0">
+                  {index + 1}
+                </span>
+                {sidebarHovered && (
+                  <div className="min-w-0 flex-1">
+                    <span className="block text-sm font-medium truncate">{instrument.name}</span>
+                    <span className="block text-xs text-gray-500 truncate">
+                      {getQuestionsForInstrument(instrument.id).length} pertanyaan
+                    </span>
+                  </div>
+                )}
+              </button>
+            ))}
+          </nav>
         </div>
       </div>
     );
@@ -599,12 +558,6 @@ export default function SurveyPreviewPage() {
         <div className="text-center">
           <DocumentTextIcon className="h-12 w-12 mx-auto text-gray-400 mb-4" />
           <p className="text-gray-500">Survey not found</p>
-          <button
-            onClick={handleBack}
-            className="mt-4 text-blue-600 hover:text-blue-800"
-          >
-            Back to Surveys
-          </button>
         </div>
       </div>
     );
@@ -621,15 +574,15 @@ export default function SurveyPreviewPage() {
             <div className="flex items-center space-x-4">
               <button
                 onClick={handleBack}
-                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+                className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-gray-800 transition-colors"
               >
-                <ArrowLeftIcon className="h-5 w-5" />
+                <ArrowLeftIcon className="h-4 w-4" />
                 <span>Kembali ke Kelola Survei</span>
               </button>
             </div>
             <div className="text-right">
-              <h1 className="text-lg font-semibold text-gray-900">{survey.title}</h1>
-              <p className="text-sm text-gray-500">Preview Mode</p>
+              <div className="text-sm text-gray-500">Preview Mode</div>
+              <div className="text-xs text-gray-400">Testing survey flow</div>
             </div>
           </div>
         </div>
@@ -651,8 +604,7 @@ export default function SurveyPreviewPage() {
               <CheckCircleIcon className="h-16 w-16 mx-auto text-green-600 mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Konfirmasi Submit Survey</h3>
               <p className="text-gray-600 mb-6">
-                Apakah Anda yakin ingin mengirimkan jawaban survey ini? 
-                Setelah dikirim, Anda tidak dapat mengubah jawaban lagi.
+                Ini adalah mode preview. Dalam mode aktual, respons akan disimpan ke database.
               </p>
               <div className="flex items-center space-x-3">
                 <button
@@ -665,7 +617,7 @@ export default function SurveyPreviewPage() {
                   onClick={confirmSubmit}
                   className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
                 >
-                  Ya, Submit
+                  Ya, Submit (Preview)
                 </button>
               </div>
             </div>

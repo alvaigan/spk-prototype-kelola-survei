@@ -10,17 +10,6 @@ export interface PostSubmitInfo {
   updatedAt: string;
 }
 
-// Legacy interface for migration
-interface LegacyPostSubmitInfo {
-  id: string;
-  title: string;
-  description: string;
-  selectedSurveyId: string; // Old format
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
 interface PostSubmitState {
   postSubmitInfo: PostSubmitInfo | null;
   isLoading: boolean;
@@ -33,13 +22,12 @@ interface PostSubmitState {
 }
 
 // Migration function to convert legacy format to new format
-const migrateLegacyData = (data: any): PostSubmitInfo => {
+const migrateLegacyData = (data: PostSubmitInfo & { selectedSurveyId?: string }): PostSubmitInfo => {
   if (data.selectedSurveyId && !data.selectedSurveyIds) {
     // Convert legacy format
     return {
       ...data,
-      selectedSurveyIds: data.selectedSurveyId ? [data.selectedSurveyId] : [],
-      selectedSurveyId: undefined
+      selectedSurveyIds: data.selectedSurveyId ? [data.selectedSurveyId] : []
     };
   }
   return data;

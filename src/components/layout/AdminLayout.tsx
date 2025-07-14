@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   HomeIcon, 
   UsersIcon, 
@@ -15,7 +15,8 @@ import {
   UserGroupIcon,
   ChevronDownIcon,
   ChevronRightIcon,
-  InformationCircleIcon
+  InformationCircleIcon,
+  QuestionMarkCircleIcon
 } from '@heroicons/react/24/outline';
 
 interface AdminLayoutProps {
@@ -35,6 +36,7 @@ const navigation: NavigationItem[] = [
   { name: 'Profil', href: '/admin/profile', icon: UserCircleIcon },
   { name: 'Kelola Survei', href: '/admin/surveys', icon: DocumentTextIcon },
   { name: 'Kelola Responden', href: '/admin/respondents', icon: UserGroupIcon },
+  { name: 'Bank Soal', href: '/admin/question-bank', icon: QuestionMarkCircleIcon },
   { name: 'Data Referensi', href: '/admin/references', icon: CogIcon },
   { 
     name: 'Pengaturan', 
@@ -62,13 +64,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     );
   };
 
-  const isActive = (href: string) => {
+  const isActive = useCallback((href: string) => {
     return pathname === href || (href !== '/admin' && pathname.startsWith(href));
-  };
+  }, [pathname]);
 
-  const hasActiveSubItem = (subItems: NavigationItem[]) => {
+  const hasActiveSubItem = useCallback((subItems: NavigationItem[]) => {
     return subItems.some(subItem => isActive(subItem.href));
-  };
+  }, [isActive]);
 
   // Auto-expand menus with active sub-items
   useEffect(() => {
@@ -79,7 +81,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         );
       }
     });
-  }, [pathname]);
+  }, [pathname, hasActiveSubItem]);
 
   return (
     <div className="flex h-screen bg-gray-100">

@@ -6,6 +6,40 @@ import { useSurveyStore } from '@/store/surveyStore';
 import { usePostSubmitStore } from '@/store/postSubmitStore';
 import { Survey } from '@/types/survey';
 
+// Mock data for demonstration
+const mockSurveys: Survey[] = [
+  {
+    id: '1',
+    code: 'S001',
+    title: 'Survei Kepuasan Mahasiswa',
+    description: 'Survei untuk mengukur kepuasan mahasiswa',
+    totalQuestions: 25,
+    createdAt: '2024-01-15',
+    status: 'Aktif',
+    instrumentStructure: []
+  },
+  {
+    id: '2',
+    code: 'S002',
+    title: 'Survei Evaluasi Dosen',
+    description: 'Survei untuk evaluasi kinerja dosen',
+    totalQuestions: 20,
+    createdAt: '2024-01-10',
+    status: 'Aktif',
+    instrumentStructure: []
+  },
+  {
+    id: '3',
+    code: 'S003',
+    title: 'Survei Fasilitas Kampus',
+    description: 'Survei kepuasan fasilitas kampus',
+    totalQuestions: 15,
+    createdAt: '2024-01-05',
+    status: 'Nonaktif',
+    instrumentStructure: []
+  }
+];
+
 export default function PostSubmitInfoPage() {
   const { surveys, setSurveys } = useSurveyStore();
   const { postSubmitInfo, isLoading, savePostSubmitInfo, loadPostSubmitInfo } = usePostSubmitStore();
@@ -14,40 +48,6 @@ export default function PostSubmitInfoPage() {
     description: '',
     selectedSurveyIds: [] as string[]
   });
-
-  // Mock data for demonstration
-  const mockSurveys: Survey[] = [
-    {
-      id: '1',
-      code: 'S001',
-      title: 'Survei Kepuasan Mahasiswa',
-      description: 'Survei untuk mengukur kepuasan mahasiswa',
-      totalQuestions: 25,
-      createdAt: '2024-01-15',
-      status: 'Aktif',
-      instrumentStructure: []
-    },
-    {
-      id: '2',
-      code: 'S002',
-      title: 'Survei Evaluasi Dosen',
-      description: 'Survei untuk evaluasi kinerja dosen',
-      totalQuestions: 20,
-      createdAt: '2024-01-10',
-      status: 'Aktif',
-      instrumentStructure: []
-    },
-    {
-      id: '3',
-      code: 'S003',
-      title: 'Survei Fasilitas Kampus',
-      description: 'Survei kepuasan fasilitas kampus',
-      totalQuestions: 15,
-      createdAt: '2024-01-05',
-      status: 'Nonaktif',
-      instrumentStructure: []
-    }
-  ];
 
   useEffect(() => {
     // Load surveys data
@@ -180,7 +180,6 @@ export default function PostSubmitInfoPage() {
                   ))
                 )}
               </div>
-              
             </div>
 
             {/* Preview */}
