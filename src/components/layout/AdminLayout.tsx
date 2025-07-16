@@ -40,7 +40,7 @@ const navigation: NavigationItem[] = [
   { name: 'Data Referensi', href: '/admin/references', icon: CogIcon },
   { 
     name: 'Pengaturan', 
-    href: '/admin/settings', 
+    href: '#', 
     icon: CogIcon,
     subItems: [
       { 
